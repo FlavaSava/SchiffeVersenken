@@ -5,9 +5,7 @@
  */
 package de.gfx;
 
-import de.schiffe.SchiffGenerator;
 import java.awt.Dimension;
-import java.awt.Point;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
 import javax.swing.JFrame;
@@ -20,16 +18,16 @@ public class Window extends JFrame implements ComponentListener {
     
     public static final Console console = new Console();
     
-    private Feld actionField;
-    private Feld viewField;
+    private final Feld actionField;
+    private final Feld viewField;
 
     public Window() {
         initComponents();
         actionField = new Feld(new Dimension(550,550));
         viewField = new Feld(new Dimension(550,550));
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        feldSlotEigen.add(actionField);
-        feldSlotView.add(viewField);
+        feldSlotEigen.add(viewField);
+        feldSlotView.add(actionField);
         console.setSize(consoleSlot.getSize());
         consoleSlot.add(console);
         this.setLocationRelativeTo(null);
@@ -39,6 +37,7 @@ public class Window extends JFrame implements ComponentListener {
         viewField.startRefresh();
         console.print("Talentfreie chinesen");
         addComponentListener(this);
+        setTitle("Schiffe versenken v1.0a");
     }
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents

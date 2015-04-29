@@ -17,7 +17,6 @@ import java.awt.Point;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionListener;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashSet;
 import javax.swing.JPanel;
 import javax.swing.border.LineBorder;
@@ -29,7 +28,7 @@ import javax.swing.border.LineBorder;
 public class Feld extends JPanel implements MouseMotionListener {
     
     private static final byte ROWS = 10+1; //Anzahl der Zeilen: 10 (+1 Beschriftung)
-    private static final byte COLS = 10+1; //Anzahl der Spalten: 10 (+1Beschriftung)
+    private static final byte COLS = 10+1; //Anzahl der Spalten: 10 (+1 Beschriftung)
     
     public static final byte ID_VOID = 0;
     public static final byte ID_WATER = 1;
@@ -73,14 +72,13 @@ public class Feld extends JPanel implements MouseMotionListener {
     }
     
     private void drawActiveField(Graphics2D g) {
-        Point relMouse = new Point(mousePos.x - xOff, mousePos.y - yOff);
-        int x = relMouse.x / xOff;
-        int y = relMouse.y / yOff;
+        Point field = getActiveField();
+        if(field == null) {
+            return;
+        }
         g.setStroke(new BasicStroke(2));
         g.setColor(Color.ORANGE);
-        if(relMouse.x >= 0 && relMouse.x <= getSize().width && relMouse.y >= 0 && relMouse.y <= getSize().height) {
-            g.drawRect(xOff + (xOff * x), yOff + (yOff * y), xOff - 2, yOff - 2);
-        }
+        g.drawRect(xOff + (xOff * field.x), yOff + (yOff * field.y), xOff - 2, yOff - 2);
     }
     
     private void drawContent(Graphics2D g) {
@@ -197,10 +195,35 @@ public class Feld extends JPanel implements MouseMotionListener {
         return null;
     }
     
+    public byte getIDAtCurrentField() {
+        Point field = getActiveField();
+        if(field != null) {
+            return getIDAtField(field);
+        }
+        return -1;
+    }
+    
+    public byte getIDAtField(Point p) {
+        return feld[p.y][p.x];
+    }
+    
+    public void setIDAtField(Point field, byte id) {
+        feld[field.y][field.x] = id;
+    }
+    
     private void calcOffset() {
         Dimension size = getSize();
         xOff = size.width / COLS; //Spaltengröße
         yOff = size.height / ROWS; //Zeilengröße
+    }
+    
+    public Point getActiveField() {
+        int x = (mousePos.x - xOff) / xOff;
+        int y = (mousePos.y - yOff) / yOff;
+        if(x >= 0 && x <= 10 && y >= 0 && y <= 10) {
+            return new Point(x, y);
+        }
+        return null;
     }
     
     public final void stopRefresh() {

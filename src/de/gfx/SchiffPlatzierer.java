@@ -11,7 +11,6 @@ import java.awt.Color;
 import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.Arrays;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 
@@ -31,6 +30,7 @@ public class SchiffPlatzierer extends JDialog implements ActionListener {
         setLocationRelativeTo(parent);
         ok.addActionListener(this);
         cancle.addActionListener(this);
+        standard.addActionListener(this);
     }
     
     private void check() {
@@ -119,7 +119,6 @@ public class SchiffPlatzierer extends JDialog implements ActionListener {
     
     private Point[] getPunkte(String text) {
         String[] split = text.split("\\-");
-        System.out.println(Arrays.toString(split));
         if(split.length != 2) {
             return null;
         }
@@ -128,8 +127,8 @@ public class SchiffPlatzierer extends JDialog implements ActionListener {
         
         Point[] tmp = new Point[2];
         try {
-            tmp[0] = new Point(Integer.parseInt(split[0].charAt(1) + ""), split[0].charAt(0) - 65);
-            tmp[1] = new Point(Integer.parseInt(split[1].charAt(1) + ""), split[1].charAt(0) - 65);
+            tmp[0] = new Point(Integer.parseInt(split[0].substring(1) + ""), split[0].charAt(0) - 65);
+            tmp[1] = new Point(Integer.parseInt(split[1].substring(1) + ""), split[1].charAt(0) - 65);
         } catch(NumberFormatException e) {
             return null;
         }
@@ -167,6 +166,14 @@ public class SchiffPlatzierer extends JDialog implements ActionListener {
             return null;
         }
     }
+    
+    private void standard() {
+        coordsRuderboot.setText("A1-A2");
+        coordsKreuzer.setText("B1-B3");
+        coordsPanzerschiff1.setText("C1-C4");
+        coordsPanzerschiff2.setText("D1-D4");
+        coordsFlugzeug.setText("E1-E5");
+    }
 
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
@@ -186,8 +193,10 @@ public class SchiffPlatzierer extends JDialog implements ActionListener {
         ok = new javax.swing.JButton();
         cancle = new javax.swing.JButton();
         msgLabel = new javax.swing.JLabel();
+        standard = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+        setTitle("Schiffe platzieren");
         setResizable(false);
 
         jLabel1.setFont(new java.awt.Font("Tahoma", 1, 24)); // NOI18N
@@ -218,6 +227,9 @@ public class SchiffPlatzierer extends JDialog implements ActionListener {
 
         msgLabel.setVerticalAlignment(javax.swing.SwingConstants.TOP);
 
+        standard.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
+        standard.setText("Standardverteilung");
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -244,6 +256,8 @@ public class SchiffPlatzierer extends JDialog implements ActionListener {
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(cancle)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(standard)
+                        .addGap(18, 18, 18)
                         .addComponent(ok)))
                 .addContainerGap())
         );
@@ -278,7 +292,8 @@ public class SchiffPlatzierer extends JDialog implements ActionListener {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(ok)
-                    .addComponent(cancle))
+                    .addComponent(cancle)
+                    .addComponent(standard))
                 .addContainerGap())
         );
 
@@ -301,6 +316,7 @@ public class SchiffPlatzierer extends JDialog implements ActionListener {
     private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel msgLabel;
     private javax.swing.JButton ok;
+    private javax.swing.JButton standard;
     // End of variables declaration//GEN-END:variables
 
     @Override
@@ -308,6 +324,8 @@ public class SchiffPlatzierer extends JDialog implements ActionListener {
         if(e.getSource() == cancle) {
             erfolg = false;
             dispose();
+        } else if(e.getSource() == standard) {
+            standard();
         } else {
             check();
         }
