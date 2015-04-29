@@ -34,6 +34,7 @@ public class Feld extends JPanel implements MouseMotionListener {
     public static final byte ID_WATER = 1;
     public static final byte ID_SHIP = 2;
     public static final byte ID_HIT = 3;
+    public static final byte ID_HIT_DONE = 4;
     
     private final ArrayList<Schiff> schiffe;
     private final HashSet<Point> schiffpunkte;
@@ -102,6 +103,15 @@ public class Feld extends JPanel implements MouseMotionListener {
                         drawSchiff(x, y, getSchiffByCoords(new Point(x, y)), g);
                         break;
                     }
+                    case  ID_HIT_DONE: {
+                        g.setStroke(new BasicStroke(3));
+                        g.setColor(Color.RED);
+                        //Rotes X im Kästchen zeichnen
+                        g.drawLine(xOff + (xOff * x) + xOff/4, yOff + (yOff * y) + yOff/4, (int)(xOff + (xOff * x) + xOff * 0.75), (int)(yOff + (yOff * y) + yOff * 0.75));
+                        g.drawLine((int)(xOff + (xOff * x) + xOff * 0.75), yOff + (yOff * y) + yOff/4, xOff + (xOff * x) + xOff/4, (int)(yOff + (yOff * y) + yOff * 0.75));
+                        g.drawLine(xOff + (xOff * x), yOff + (yOff * y) + yOff/2, xOff + (xOff * x) + xOff, yOff + (yOff * y) + yOff/2);
+                        break;
+                    }
                 }
             }
         }
@@ -113,6 +123,7 @@ public class Feld extends JPanel implements MouseMotionListener {
         byte type = f.getType();
         
         g.setStroke(new BasicStroke(3));
+        g.setColor(Color.BLACK);
         if(type == Schiff.TYPE_LEFT_RIGHT) {
             if(seg == 1) {
                 //AnfangsSpitze zeichnen
@@ -146,6 +157,7 @@ public class Feld extends JPanel implements MouseMotionListener {
     
     private void drawLabel(Graphics2D g) {
         g.setFont(new Font("Arial", Font.BOLD, (int)Math.min(xOff/2, yOff/2)));
+        g.setColor(Color.BLACK);
         for(int x = 0; x < COLS-1; x++) {
             g.drawString((x + 1)+"", (xOff/2) + (xOff * (x+1)) - g.getFont().getSize()/2, yOff/2 + g.getFont().getSize() / 2);
         }
@@ -156,6 +168,7 @@ public class Feld extends JPanel implements MouseMotionListener {
     
     private void drawGrid(Graphics2D g) {
         g.setStroke(new BasicStroke(3));
+        g.setColor(Color.BLACK);
         Dimension dim = this.getSize();
         for(int x = 0; x < COLS; x++) {
             g.drawLine(xOff + (xOff * x), 0, xOff + (xOff * x), dim.height);
@@ -186,7 +199,7 @@ public class Feld extends JPanel implements MouseMotionListener {
         }
     }
     
-    private Schiff getSchiffByCoords(Point p) {
+    public Schiff getSchiffByCoords(Point p) {
         for(Schiff f : schiffe) {
             if(f.getSegment(p) != -1) {
                 return f;

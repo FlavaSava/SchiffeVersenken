@@ -73,7 +73,6 @@ public class Game implements MouseListener {
                 Window.console.println("Du bist dran");
                 while(isDran) {
                     if(mouse[0]) {
-                        System.out.println("Click Action");
                         clickAction();
                     }
                     try {
@@ -87,7 +86,7 @@ public class Game implements MouseListener {
     }
     
     private void clickAction() {
-        if(window.getActionField().getIDAtCurrentField() == Feld.ID_VOID) {
+        if(window.getActionField().getIDAtCurrentField() == Feld.ID_VOID && isDran) {
             Point p = window.getActionField().getActiveField();
             lastShot = p;
             System.out.println("sendMessage shoot");
@@ -102,7 +101,14 @@ public class Game implements MouseListener {
             window.getViewField().setIDAtField(p, Feld.ID_WATER);
             return Feld.ID_WATER;
         } else {
+            window.getViewField().getSchiffByCoords(p).hit(p.x, p.y);
             window.getViewField().setIDAtField(p, Feld.ID_HIT);
+            if(window.getViewField().getSchiffByCoords(p).isDestroyed()) {
+                for(Point po : window.getViewField().getSchiffByCoords(p).getCoords()) {
+                    window.getViewField().setIDAtField(po, Feld.ID_HIT_DONE);
+                }
+                return Feld.ID_HIT_DONE;
+            }
             return Feld.ID_HIT;
         }
     }
@@ -121,15 +127,28 @@ public class Game implements MouseListener {
                 break;
             }
             case "shoot": {
-                System.out.println("Empfange shoot");
                 byte id = hitAt(new Point(Integer.parseInt(split[1].charAt(0)+""), Integer.parseInt(split[1].charAt(1)+"")));
-                System.out.println("send res");
-                sendMessageToServer("res|"+id);
+                if(id == Feld.ID_HIT_DONE) {
+                    String co = "";
+                    for(Point p : window.getViewField().getSchiffByCoords(new Point(Integer.parseInt(split[1].charAt(0)+""), Integer.parseInt(split[1].charAt(1)+""))).getCoords()) {
+                        co += p.x+","+p.y+"|";
+                    }
+                    sendMessageToServer("res|"+id+"|"+co.substring(0, co.length()-1));
+                } else {
+                    sendMessageToServer("res|"+id);
+                }
                 break;
             }
             case "res": {
-                System.out.println("empfange res");
-                window.getActionField().setIDAtField(lastShot, Byte.parseByte(split[1]));
+                byte id = Byte.parseByte(split[1]);
+                if(id != Feld.ID_HIT_DONE) {
+                    window.getActionField().setIDAtField(lastShot, id);
+                } else {
+                    for(int x = 2; x < split.length; x++) {
+                        Point point = new Point(Integer.parseInt(split[x].split(",")[0]), Integer.parseInt(split[x].split(",")[1]));
+                        window.getActionField().setIDAtField(point, Feld.ID_HIT_DONE);
+                    }
+                }
                 break;
             }
             case "win": {
