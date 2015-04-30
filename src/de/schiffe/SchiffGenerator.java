@@ -7,6 +7,7 @@
 package de.schiffe;
 
 import java.awt.Point;
+import java.util.HashSet;
 
 /**
  *
@@ -35,6 +36,24 @@ public class SchiffGenerator {
             System.out.println("=======================");
         }
         return tmp;
+    }
+    
+    public static boolean validate(Schiff[] schiffe) {
+        HashSet<Point> points = new HashSet<>();
+        
+        for(Schiff f : schiffe) {
+            if(f == null) {
+                continue;
+            }
+            for(Point p : f.getCoords()) {
+                if(points.contains(p)) {
+                    return false;
+                }
+                points.add(p);
+            }
+        }
+        
+        return true;
     }
 
 }

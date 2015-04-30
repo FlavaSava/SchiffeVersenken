@@ -50,6 +50,8 @@
                   <Group type="102" alignment="1" attributes="0">
                       <Component id="cancle" min="-2" max="-2" attributes="0"/>
                       <EmptySpace max="32767" attributes="0"/>
+                      <Component id="zufall" min="-2" max="-2" attributes="0"/>
+                      <EmptySpace type="separate" max="-2" attributes="0"/>
                       <Component id="standard" min="-2" max="-2" attributes="0"/>
                       <EmptySpace type="separate" max="-2" attributes="0"/>
                       <Component id="ok" min="-2" max="-2" attributes="0"/>
@@ -97,6 +99,7 @@
                   <Component id="ok" alignment="3" min="-2" max="-2" attributes="0"/>
                   <Component id="cancle" alignment="3" min="-2" max="-2" attributes="0"/>
                   <Component id="standard" alignment="3" min="-2" max="-2" attributes="0"/>
+                  <Component id="zufall" alignment="3" min="-2" max="-2" attributes="0"/>
               </Group>
               <EmptySpace max="-2" attributes="0"/>
           </Group>
@@ -191,6 +194,14 @@
           <Font name="Tahoma" size="14" style="1"/>
         </Property>
         <Property name="text" type="java.lang.String" value="Standardverteilung"/>
+      </Properties>
+    </Component>
+    <Component class="javax.swing.JButton" name="zufall">
+      <Properties>
+        <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+          <Font name="Tahoma" size="14" style="1"/>
+        </Property>
+        <Property name="text" type="java.lang.String" value="Zufall"/>
       </Properties>
     </Component>
   </SubComponents>

@@ -7,44 +7,76 @@ package de.gfx;
 
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.Image;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
+import java.io.File;
+import java.io.IOException;
+import javax.imageio.ImageIO;
 import javax.swing.JFrame;
 
 /**
  *
  * @author lucash
  */
-public class Window extends JFrame implements ComponentListener {
+public class Window extends JFrame implements ComponentListener, ActionListener {
     
     public static final Console console = new Console();
     
     private final Feld actionField;
     private final Feld viewField;
+    private final SettingsWindow settingsWindow;
 
+    @SuppressWarnings("")
     public Window() {
         initComponents();
         actionField = new Feld(new Dimension(550,550));
         viewField = new Feld(new Dimension(550,550));
+        settingsWindow = new SettingsWindow(this);
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         feldSlotEigen.add(viewField);
         feldSlotView.add(actionField);
         console.setSize(consoleSlot.getSize());
         consoleSlot.add(console);
+        settings.addActionListener(this);
         this.setLocationRelativeTo(null);
         this.setVisible(true);
         actionField.drawActivField(true);
-        actionField.startRefresh();
-        viewField.startRefresh();
         addComponentListener(this);
         setTitle("Schiffe versenken v1.0a");
+        setBackgroundImage(null);
+        actionField.startRefresh();
+        viewField.startRefresh();
+    }
+    
+    protected void setBackgroundImage(File f) {
+        Image i = null;
+        if(f == null) {
+            try {
+                i = ImageIO.read(getClass().getClassLoader().getResourceAsStream("water.png")).getScaledInstance(feldSlotEigen.getWidth(), feldSlotEigen.getHeight(), Image.SCALE_SMOOTH);
+            } catch(IOException e) {
+                //...
+            }
+        } else {
+            try {
+                i = ImageIO.read(f).getScaledInstance(feldSlotEigen.getWidth(), feldSlotEigen.getHeight(), Image.SCALE_SMOOTH);
+            } catch (IOException ex) {
+                //...
+            }
+        }
+        actionField.setBackgroundImage(i);
+        viewField.setBackgroundImage(i);
     }
     
     public void setConnected(boolean connected) {
         if(connected) {
             connectStatus.setBackground(Color.GREEN);
+            connectStatus.setText("Verbindungsstatus: Verbunden");
         } else {
             connectStatus.setBackground(Color.RED);
+            connectStatus.setText("Verbindungsstatus: Nicht verbunden");
         }
     }
     @SuppressWarnings("unchecked")
@@ -55,6 +87,7 @@ public class Window extends JFrame implements ComponentListener {
         feldSlotEigen = new javax.swing.JPanel();
         consoleSlot = new javax.swing.JPanel();
         connectStatus = new javax.swing.JLabel();
+        settings = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -96,13 +129,16 @@ public class Window extends JFrame implements ComponentListener {
         );
         consoleSlotLayout.setVerticalGroup(
             consoleSlotLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 141, Short.MAX_VALUE)
+            .addGap(0, 134, Short.MAX_VALUE)
         );
 
         connectStatus.setFont(new java.awt.Font("Tahoma", 1, 13)); // NOI18N
         connectStatus.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         connectStatus.setText("Verbindungsstatus");
         connectStatus.setOpaque(true);
+
+        settings.setIcon(new javax.swing.ImageIcon(getClass().getResource("/settings.png"))); // NOI18N
+        settings.setFocusPainted(false);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -111,12 +147,15 @@ public class Window extends JFrame implements ComponentListener {
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(connectStatus, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(consoleSlot, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(feldSlotEigen, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 32, Short.MAX_VALUE)
-                        .addComponent(feldSlotView, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 70, Short.MAX_VALUE)
+                        .addComponent(feldSlotView, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(connectStatus, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(settings, javax.swing.GroupLayout.PREFERRED_SIZE, 41, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -127,7 +166,9 @@ public class Window extends JFrame implements ComponentListener {
                     .addComponent(feldSlotEigen, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(feldSlotView, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(connectStatus)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(connectStatus)
+                    .addComponent(settings, javax.swing.GroupLayout.PREFERRED_SIZE, 34, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(consoleSlot, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addContainerGap())
@@ -141,6 +182,7 @@ public class Window extends JFrame implements ComponentListener {
     private javax.swing.JPanel consoleSlot;
     private javax.swing.JPanel feldSlotEigen;
     private javax.swing.JPanel feldSlotView;
+    private javax.swing.JButton settings;
     // End of variables declaration//GEN-END:variables
 
     public Feld getActionField() {
@@ -166,5 +208,13 @@ public class Window extends JFrame implements ComponentListener {
 
     @Override
     public void componentHidden(ComponentEvent e) {
+    }
+    
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        if(e.getSource() == settings) {
+            settingsWindow.refresh();
+            settingsWindow.setVisible(true);
+        }
     }
 }

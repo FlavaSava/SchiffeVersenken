@@ -11,6 +11,7 @@ import java.awt.Color;
 import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.Random;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 
@@ -23,6 +24,7 @@ public class SchiffPlatzierer extends JDialog implements ActionListener {
     private final Schiff[] schiffe;
     private boolean erfolg;
 
+    @SuppressWarnings("")
     public SchiffPlatzierer(JFrame parent) {
         super(parent, true);
         initComponents();
@@ -31,6 +33,7 @@ public class SchiffPlatzierer extends JDialog implements ActionListener {
         ok.addActionListener(this);
         cancle.addActionListener(this);
         standard.addActionListener(this);
+        zufall.addActionListener(this);
     }
     
     private void check() {
@@ -169,10 +172,64 @@ public class SchiffPlatzierer extends JDialog implements ActionListener {
     
     private void standard() {
         coordsRuderboot.setText("A1-A2");
+        coordsRuderboot.setForeground(Color.BLACK);
         coordsKreuzer.setText("B1-B3");
+        coordsKreuzer.setForeground(Color.BLACK);
         coordsPanzerschiff1.setText("C1-C4");
+        coordsPanzerschiff1.setForeground(Color.BLACK);
         coordsPanzerschiff2.setText("D1-D4");
+        coordsPanzerschiff2.setForeground(Color.BLACK);
         coordsFlugzeug.setText("E1-E5");
+        coordsFlugzeug.setForeground(Color.BLACK);
+    }
+    
+    private void zufall() {
+        new Thread() {
+            @Override
+            public void run() {
+                Schiff[] tmp = new Schiff[5];
+
+                tmp[0] = getRandomSchiff(2);
+                coordsRuderboot.setText((char)(tmp[0].getCoords()[0].y+65)+""+(tmp[0].getCoords()[0].x+1)+" - "+(char)(tmp[0].getCoords()[1].y+65)+""+(tmp[0].getCoords()[1].x+1));
+                do {
+                    tmp[1] = getRandomSchiff(3);
+                } while(!SchiffGenerator.validate(tmp));
+                coordsKreuzer.setText((char)(tmp[1].getCoords()[0].y+65)+""+(tmp[1].getCoords()[0].x+1)+" - "+(char)(tmp[1].getCoords()[2].y+65)+""+(tmp[1].getCoords()[2].x+1));
+                do {
+                    tmp[2] = getRandomSchiff(4);
+                } while(!SchiffGenerator.validate(tmp));
+                coordsPanzerschiff1.setText((char)(tmp[2].getCoords()[0].y+65)+""+(tmp[2].getCoords()[0].x+1)+" - "+(char)(tmp[2].getCoords()[3].y+65)+""+(tmp[2].getCoords()[3].x+1));
+                do {
+                    tmp[3] = getRandomSchiff(4);
+                } while(!SchiffGenerator.validate(tmp));
+                coordsPanzerschiff2.setText((char)(tmp[3].getCoords()[0].y+65)+""+(tmp[3].getCoords()[0].x+1)+" - "+(char)(tmp[3].getCoords()[3].y+65)+""+(tmp[3].getCoords()[3].x+1));
+                do {
+                    tmp[4] = getRandomSchiff(5);
+                } while(!SchiffGenerator.validate(tmp));
+                coordsFlugzeug.setText((char)(tmp[4].getCoords()[0].y+65)+""+(tmp[4].getCoords()[0].x+1)+" - "+(char)(tmp[4].getCoords()[4].y+65)+""+(tmp[4].getCoords()[4].x+1));
+
+                zufall.setEnabled(true);
+            }
+        }.start();
+    }
+    
+    private Schiff getRandomSchiff(int size) {
+        boolean vertical = new Random(System.nanoTime()).nextBoolean();
+        if(vertical) {
+            int xStart = zufallsZahl(1, 10);
+            int yStart = zufallsZahl(0, 9-(size-1));
+            
+            return SchiffGenerator.generateSchiff(getIntervall(new Point(xStart, yStart), new Point(xStart, yStart + (size-1))));
+        } else {
+            int xStart = zufallsZahl(1, 10 - (size-1));
+            int yStart = zufallsZahl(0, 9);
+            
+            return SchiffGenerator.generateSchiff(getIntervall(new Point(xStart, yStart), new Point(xStart + (size-1), yStart)));
+        }
+    }
+    
+    public int zufallsZahl(int min, int max) {
+        return (int)(Math.random() * ((max+1) - min) + min);
     }
 
     @SuppressWarnings("unchecked")
@@ -194,6 +251,7 @@ public class SchiffPlatzierer extends JDialog implements ActionListener {
         cancle = new javax.swing.JButton();
         msgLabel = new javax.swing.JLabel();
         standard = new javax.swing.JButton();
+        zufall = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Schiffe platzieren");
@@ -230,6 +288,9 @@ public class SchiffPlatzierer extends JDialog implements ActionListener {
         standard.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
         standard.setText("Standardverteilung");
 
+        zufall.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
+        zufall.setText("Zufall");
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -256,6 +317,8 @@ public class SchiffPlatzierer extends JDialog implements ActionListener {
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(cancle)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(zufall)
+                        .addGap(18, 18, 18)
                         .addComponent(standard)
                         .addGap(18, 18, 18)
                         .addComponent(ok)))
@@ -293,7 +356,8 @@ public class SchiffPlatzierer extends JDialog implements ActionListener {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(ok)
                     .addComponent(cancle)
-                    .addComponent(standard))
+                    .addComponent(standard)
+                    .addComponent(zufall))
                 .addContainerGap())
         );
 
@@ -317,6 +381,7 @@ public class SchiffPlatzierer extends JDialog implements ActionListener {
     private javax.swing.JLabel msgLabel;
     private javax.swing.JButton ok;
     private javax.swing.JButton standard;
+    private javax.swing.JButton zufall;
     // End of variables declaration//GEN-END:variables
 
     @Override
@@ -326,6 +391,9 @@ public class SchiffPlatzierer extends JDialog implements ActionListener {
             dispose();
         } else if(e.getSource() == standard) {
             standard();
+        } else if(e.getSource() == zufall) {
+            zufall.setEnabled(false);
+            zufall();
         } else {
             check();
         }

@@ -30,7 +30,7 @@ public class SchiffServer extends Thread {
             System.out.println("Connecting to port " +port);
             server = new ServerSocket(port);
         } catch (IOException ex) {
-            ex.printStackTrace();
+            System.out.println("Unable to bind server on Port "+port+"!");
         }
     }
     
@@ -42,13 +42,13 @@ public class SchiffServer extends Thread {
             try {
                 tmp = server.accept();
             } catch (IOException ex) {
-                ex.printStackTrace();
+                System.out.println("An error occured during connectiontry");
             }
             client1 = new CThread(tmp);
             try {
                 Thread.sleep(100);
             } catch(InterruptedException e) {
-                
+                //...
             }
             client1.sendMessage("msg|Warte auf zweiten Spieler");
             System.out.println("Successfull!");
@@ -58,7 +58,7 @@ public class SchiffServer extends Thread {
             try {
                 tmp = server.accept();
             } catch (IOException ex) {
-                ex.printStackTrace();
+                System.out.println("An error occured during connectiontry");
             }
             client2 = new CThread(tmp);
             try {
@@ -117,9 +117,9 @@ public class SchiffServer extends Thread {
     
     private void exit(boolean force) {
         if(force) {
-            System.out.println("Problem erkannt, Server wird heruntergefahren");
+            System.out.println("Problem detected. Server is shutting down");
         } else {
-            System.out.println("Spiel beendet");
+            System.out.println("Game ended");
         }
         System.exit(0);
     }
@@ -145,7 +145,7 @@ public class SchiffServer extends Thread {
                 this.out = new ObjectOutputStream(client.getOutputStream());
                 this.in = new ObjectInputStream(client.getInputStream());
             } catch (IOException ex) {
-                ex.printStackTrace();
+                System.out.println("Unable do open stream to client");
             }
         }
         
@@ -153,9 +153,9 @@ public class SchiffServer extends Thread {
         public void run() {
             isRunning = true;
             while(isRunning) {
-                Message m = receiveMessage();
-                if(m != null) {
-                    handleMessage(m.msg, this);
+                String msg = receiveMessage();
+                if(msg != null) {
+                    handleMessage(msg, this);
                 }
             }
         }
@@ -167,43 +167,36 @@ public class SchiffServer extends Thread {
                 out.close();
                 client.close();
             } catch (IOException ex) {
-                ex.printStackTrace();
+                System.out.println("Disconnect was not successfull");
             }
         }
         
-        public Message receiveMessage() {
-            Message m = null;
+        public String receiveMessage() {
+            String msg = null;
             try {
-                m = (Message)in.readObject();
+                msg = (String)in.readObject();
             } catch (IOException | ClassNotFoundException ex) {
                 if(isRunning) {
-                    ex.printStackTrace();
                     SchiffServer.this.disconnect();
                     exit(true);
                 }
                 isRunning = false;
             }
-            return m;
-        }
-        
-        public void sendMessage(Message m) {
-            try {
-                out.writeObject(m);
-                out.flush();
-            } catch (IOException ex) {
-                if(isRunning) {
-                    ex.printStackTrace();
-                    SchiffServer.this.disconnect();
-                    exit(true);
-                }
-                isRunning = false;
-            }
+            return msg;
         }
         
         public void sendMessage(String msg) {
-            sendMessage(new Message(msg));
+            try {
+                out.writeObject(msg);
+                out.flush();
+            } catch (IOException ex) {
+                if(isRunning) {
+                    SchiffServer.this.disconnect();
+                    exit(true);
+                }
+                isRunning = false;
+            }
         }
-        
     }
 
 

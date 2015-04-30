@@ -19,7 +19,6 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
 import javax.swing.JOptionPane;
-import server.Message;
 import server.SchiffServer;
 
 /**
@@ -39,6 +38,7 @@ public class Game implements MouseListener {
     private Point lastShot;
     private boolean listening;
     
+    @SuppressWarnings("")
     public Game() {
         mouse = new boolean[3];
         window = new Window();
@@ -165,7 +165,6 @@ public class Game implements MouseListener {
                 break;
             }
             case "win": {
-                //Gewinn benachrichtigung
                 Window.console.println("Du hast gewonnen!");
                 break;
             }
@@ -202,12 +201,13 @@ public class Game implements MouseListener {
             in.close();
             socket.close();
         } catch(IOException e) {
-            e.printStackTrace();
+            //...
         }
     }
 
     @Override
     public void mouseClicked(MouseEvent e) {
+        //...
     }
 
     @Override
@@ -222,33 +222,33 @@ public class Game implements MouseListener {
 
     @Override
     public void mouseEntered(MouseEvent e) {
+        //...
     }
 
     @Override
     public void mouseExited(MouseEvent e) {
+        //...
     }
     
     private void sendMessageToServer(String msg) {
         try {
-            out.writeObject(new Message(msg));
+            out.writeObject(msg);
             out.flush();
         } catch (IOException ex) {
-            ex.printStackTrace();
             window.setConnected(false);
             listening = false;
         }
     }
     
-    private Message receiveMessage() {
-        Message m = null;
+    private String receiveMessage() {
+        String msg = null;
         try {
-            m = (Message) in.readObject();
+            msg = (String)in.readObject();
         } catch (IOException | ClassNotFoundException ex) {
-            ex.printStackTrace();
             window.setConnected(false);
             listening = false;
         }
-        return m;
+        return msg;
     }
     
     private void startListening() {
@@ -257,9 +257,9 @@ public class Game implements MouseListener {
             @Override
             public void run() {
                 while(listening) {
-                    Message m = receiveMessage();
-                    if(m != null) {
-                        handleMessage(m.msg);
+                    String msg = receiveMessage();
+                    if(msg != null) {
+                        handleMessage(msg);
                     }
                 }
             }
