@@ -79,6 +79,7 @@ public class Window extends JFrame implements ComponentListener, ActionListener 
             connectStatus.setText("Verbindungsstatus: Nicht verbunden");
         }
     }
+    
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
@@ -90,6 +91,7 @@ public class Window extends JFrame implements ComponentListener, ActionListener 
         settings = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setResizable(false);
 
         feldSlotView.setBackground(new java.awt.Color(255, 255, 255));
         feldSlotView.setPreferredSize(new java.awt.Dimension(550, 550));
@@ -200,14 +202,17 @@ public class Window extends JFrame implements ComponentListener, ActionListener 
 
     @Override
     public void componentMoved(ComponentEvent e) {
+        //...
     }
 
     @Override
     public void componentShown(ComponentEvent e) {
+        //...
     }
 
     @Override
     public void componentHidden(ComponentEvent e) {
+        //...
     }
     
     @Override

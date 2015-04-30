@@ -38,6 +38,7 @@ public class SettingsWindow extends JFrame implements ActionListener {
         
         combobackground.removeAllItems();
         combobackground.addItem("Standard");
+        combobackground.addItem("Kein");
         if(new File("background").exists()) {
             for(File f : new File("background").listFiles()) {
                 if(f.isFile() && f.getName().endsWith(".png")) {
@@ -59,10 +60,17 @@ public class SettingsWindow extends JFrame implements ActionListener {
     private void applyBackgroundImage() {
         String res = combobackground.getSelectedItem().toString();
         
-        if(res.equals("Standard")) {
-            window.setBackgroundImage(null);
-        } else {
-            window.setBackgroundImage(new File("background/"+res));
+        switch (res) {
+            case "Standard":
+                window.setBackgroundImage(null);
+                break;
+            case "Kein":
+                window.getActionField().setBackgroundImage(null);
+                window.getViewField().setBackgroundImage(null);
+                break;
+            default:
+                window.setBackgroundImage(new File("background/"+res));
+                break;
         }
     }
     
@@ -71,7 +79,7 @@ public class SettingsWindow extends JFrame implements ActionListener {
         split = gridcolor.getText().split(",");
         if(split.length == 3) {
             try {
-                Color c = new Color(Integer.parseInt(split[0]), Integer.parseInt(split[1]), Integer.parseInt(split[2]));
+                Color c = new Color((int)Math.min(Math.abs(Integer.parseInt(split[0])), 255), (int)Math.min(Math.abs(Integer.parseInt(split[1])), 255), (int)Math.min(Math.abs(Integer.parseInt(split[2])), 255));
                 Feld.GRID_COLOR = c;
             } catch(NumberFormatException e) {
                 gridcolor.setText(Feld.GRID_COLOR.getRed()+","+Feld.GRID_COLOR.getGreen()+","+Feld.GRID_COLOR.getBlue());
@@ -86,7 +94,7 @@ public class SettingsWindow extends JFrame implements ActionListener {
         split = labelcolor.getText().split(",");
         if(split.length == 3) {
             try {
-                Color c = new Color(Integer.parseInt(split[0]), Integer.parseInt(split[1]), Integer.parseInt(split[2]));
+                Color c = new Color((int)Math.min(Math.abs(Integer.parseInt(split[0])), 255), (int)Math.min(Math.abs(Integer.parseInt(split[1])), 255), (int)Math.min(Math.abs(Integer.parseInt(split[2])), 255));
                 Feld.LABEL_COLOR = c;
             } catch(NumberFormatException e) {
                 labelcolor.setText(Feld.LABEL_COLOR.getRed()+","+Feld.LABEL_COLOR.getGreen()+","+Feld.LABEL_COLOR.getBlue());
@@ -101,7 +109,7 @@ public class SettingsWindow extends JFrame implements ActionListener {
         split = shipcolor.getText().split(",");
         if(split.length == 3) {
             try {
-                Color c = new Color(Integer.parseInt(split[0]), Integer.parseInt(split[1]), Integer.parseInt(split[2]));
+                Color c = new Color((int)Math.min(Math.abs(Integer.parseInt(split[0])), 255), (int)Math.min(Math.abs(Integer.parseInt(split[1])), 255), (int)Math.min(Math.abs(Integer.parseInt(split[2])), 255));
                 Feld.SHIP_COLOR = c;
             } catch(NumberFormatException e) {
                 shipcolor.setText(Feld.SHIP_COLOR.getRed()+","+Feld.SHIP_COLOR.getGreen()+","+Feld.SHIP_COLOR.getBlue());
@@ -116,7 +124,7 @@ public class SettingsWindow extends JFrame implements ActionListener {
         split = watercolor.getText().split(",");
         if(split.length == 3) {
             try {
-                Color c = new Color(Integer.parseInt(split[0]), Integer.parseInt(split[1]), Integer.parseInt(split[2]));
+                Color c = new Color((int)Math.min(Math.abs(Integer.parseInt(split[0])), 255), (int)Math.min(Math.abs(Integer.parseInt(split[1])), 255), (int)Math.min(Math.abs(Integer.parseInt(split[2])), 255));
                 Feld.WATER_COLOR = c;
             } catch(NumberFormatException e) {
                 watercolor.setText(Feld.WATER_COLOR.getRed()+","+Feld.WATER_COLOR.getGreen()+","+Feld.WATER_COLOR.getBlue());
@@ -131,7 +139,7 @@ public class SettingsWindow extends JFrame implements ActionListener {
         split = hitcolor.getText().split(",");
         if(split.length == 3) {
             try {
-                Color c = new Color(Integer.parseInt(split[0]), Integer.parseInt(split[1]), Integer.parseInt(split[2]));
+                Color c = new Color((int)Math.min(Math.abs(Integer.parseInt(split[0])), 255), (int)Math.min(Math.abs(Integer.parseInt(split[1])), 255), (int)Math.min(Math.abs(Integer.parseInt(split[2])), 255));
                 Feld.HIT_COLOR = c;
             } catch(NumberFormatException e) {
                 hitcolor.setText(Feld.HIT_COLOR.getRed()+","+Feld.HIT_COLOR.getGreen()+","+Feld.HIT_COLOR.getBlue());

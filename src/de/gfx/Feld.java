@@ -281,7 +281,7 @@ public class Feld extends JPanel implements MouseMotionListener {
         }
         for(Point p : f.getCoords()) {
             if(schiffpunkte.contains(p)) {
-                throw new IllegalArgumentException("Schiff scheidet sich mit einm anderen! "+f);
+                throw new IllegalArgumentException("Schiff scheidet sich mit einem anderen! "+f);
             }
         }
         if(toField) {
@@ -303,6 +303,7 @@ public class Feld extends JPanel implements MouseMotionListener {
 
     @Override
     public void mouseDragged(MouseEvent e) {
+        //...
     }
 
     @Override

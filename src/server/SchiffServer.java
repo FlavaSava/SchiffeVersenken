@@ -34,6 +34,7 @@ public class SchiffServer extends Thread {
         }
     }
     
+    @SuppressWarnings("")
     @Override
     public void run(){
         Socket tmp = null;
@@ -77,11 +78,9 @@ public class SchiffServer extends Thread {
     }
     
     private void handleMessage(String msg, CThread sender) {
-        System.out.println("empfange message: "+msg);
         String[] split = msg.split("\\|");
         switch(split[0]) {
             case "shoot": {
-                System.out.println("leite shoot weiter");
                 getOpposite(sender).sendMessage(msg);
                 break;
             }
@@ -105,7 +104,7 @@ public class SchiffServer extends Thread {
                 break;
             }
             default: {
-                System.out.println("Ungültige nachricht: "+msg);
+                System.out.println("Unvalid message: "+msg);
             }
         }
     }

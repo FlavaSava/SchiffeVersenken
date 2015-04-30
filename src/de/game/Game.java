@@ -69,12 +69,12 @@ public class Game implements MouseListener {
             socket = new Socket(ip, port);
             in = new ObjectInputStream(socket.getInputStream());
             out = new ObjectOutputStream(socket.getOutputStream());
+            startListening();
             window.setConnected(true);
             Window.console.println("<font color=green>Erfolg!</font>");
         } catch (IOException ex) {
             Window.console.println("<font color=red>Fehlgeschlagen!</font>");
         }
-        startListening();
     }
     
     private void clickAction() {
@@ -110,6 +110,7 @@ public class Game implements MouseListener {
         }
     }
     
+    @SuppressWarnings("")
     private void handleMessage(String msg) {
         String[] split = msg.split("\\|");
         switch(split[0]) {
@@ -281,6 +282,7 @@ public class Game implements MouseListener {
         
         private boolean isDran;
         
+        @SuppressWarnings("")
         @Override
         public void run() {
             while(isDran) {
