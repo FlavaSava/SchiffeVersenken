@@ -5,6 +5,7 @@
  */
 package de.gfx;
 
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
@@ -35,9 +36,16 @@ public class Window extends JFrame implements ComponentListener {
         actionField.drawActivField(true);
         actionField.startRefresh();
         viewField.startRefresh();
-        console.print("Talentfreie chinesen");
         addComponentListener(this);
         setTitle("Schiffe versenken v1.0a");
+    }
+    
+    public void setConnected(boolean connected) {
+        if(connected) {
+            connectStatus.setBackground(Color.GREEN);
+        } else {
+            connectStatus.setBackground(Color.RED);
+        }
     }
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
@@ -46,6 +54,7 @@ public class Window extends JFrame implements ComponentListener {
         feldSlotView = new javax.swing.JPanel();
         feldSlotEigen = new javax.swing.JPanel();
         consoleSlot = new javax.swing.JPanel();
+        connectStatus = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -87,8 +96,13 @@ public class Window extends JFrame implements ComponentListener {
         );
         consoleSlotLayout.setVerticalGroup(
             consoleSlotLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 120, Short.MAX_VALUE)
+            .addGap(0, 141, Short.MAX_VALUE)
         );
+
+        connectStatus.setFont(new java.awt.Font("Tahoma", 1, 13)); // NOI18N
+        connectStatus.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        connectStatus.setText("Verbindungsstatus");
+        connectStatus.setOpaque(true);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -97,6 +111,7 @@ public class Window extends JFrame implements ComponentListener {
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(connectStatus, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(consoleSlot, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(feldSlotEigen, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -111,7 +126,9 @@ public class Window extends JFrame implements ComponentListener {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(feldSlotEigen, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(feldSlotView, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(18, 18, 18)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(connectStatus)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(consoleSlot, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addContainerGap())
         );
@@ -120,6 +137,7 @@ public class Window extends JFrame implements ComponentListener {
     }// </editor-fold>//GEN-END:initComponents
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JLabel connectStatus;
     private javax.swing.JPanel consoleSlot;
     private javax.swing.JPanel feldSlotEigen;
     private javax.swing.JPanel feldSlotView;

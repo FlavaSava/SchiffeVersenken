@@ -27,7 +27,7 @@ public class SchiffServer extends Thread {
     
     public SchiffServer(int port) {
         try {
-            System.out.println("Connecting to port" +port);
+            System.out.println("Connecting to port " +port);
             server = new ServerSocket(port);
         } catch (IOException ex) {
             ex.printStackTrace();
@@ -45,6 +45,12 @@ public class SchiffServer extends Thread {
                 ex.printStackTrace();
             }
             client1 = new CThread(tmp);
+            try {
+                Thread.sleep(100);
+            } catch(InterruptedException e) {
+                
+            }
+            client1.sendMessage("msg|Warte auf zweiten Spieler");
             System.out.println("Successfull!");
         }
         System.out.println("Looking for Player 2/2");
@@ -55,22 +61,19 @@ public class SchiffServer extends Thread {
                 ex.printStackTrace();
             }
             client2 = new CThread(tmp);
-            System.out.println("Successfull");
-        }
-        System.out.println("Sending start signal");
-        client1.start();
-        client2.start();
-        client1.sendMessage("start");
-        client2.sendMessage("start");
-        client1.sendMessage("dran");
-        
-        while(!exit) {
             try {
-                Thread.sleep(1500);
+                Thread.sleep(100);
             } catch(InterruptedException e) {
                 
             }
+            client2.sendMessage("msg|Du bist der zweite Spieler");
+            System.out.println("Successfull!");
         }
+        client1.start();
+        client2.start();
+        client1.sendMessage("msg|Spiel startet");
+        client2.sendMessage("msg|Spiel startet");
+        client1.sendMessage("dran");
     }
     
     private void handleMessage(String msg, CThread sender) {
@@ -86,21 +89,39 @@ public class SchiffServer extends Thread {
                 getOpposite(sender).sendMessage("win");
                 getOpposite(sender).sendMessage("exit");
                 sender.sendMessage("exit");
+                disconnect();
+                exit(false);
+                break;
             }
             case "res": {
                 getOpposite(sender).sendMessage(msg);
-                if(Byte.parseByte(split[1]) == Feld.ID_HIT) {
+                if(Byte.parseByte(split[1]) == Feld.ID_HIT || Byte.parseByte(split[1]) == Feld.ID_HIT_DONE) {
                     getOpposite(sender).sendMessage("dran");
                     sender.sendMessage("nodran");
                 } else {
                     getOpposite(sender).sendMessage("nodran");
                     sender.sendMessage("dran");
                 }
+                break;
             }
             default: {
                 System.out.println("Ungültige nachricht: "+msg);
             }
         }
+    }
+    
+    private void disconnect() {
+        client1.disconnect();
+        client2.disconnect();
+    }
+    
+    private void exit(boolean force) {
+        if(force) {
+            System.out.println("Problem erkannt, Server wird heruntergefahren");
+        } else {
+            System.out.println("Spiel beendet");
+        }
+        System.exit(0);
     }
     
     private CThread getOpposite(CThread c) {
@@ -113,7 +134,6 @@ public class SchiffServer extends Thread {
     
     private class CThread extends Thread {
         
-        private boolean dran;
         private Socket client;
         private ObjectOutputStream out;
         private ObjectInputStream in;
@@ -127,7 +147,6 @@ public class SchiffServer extends Thread {
             } catch (IOException ex) {
                 ex.printStackTrace();
             }
-            dran = false;
         }
         
         @Override
@@ -141,14 +160,28 @@ public class SchiffServer extends Thread {
             }
         }
         
+        public void disconnect() {
+            isRunning = false;
+            try {
+                in.close();
+                out.close();
+                client.close();
+            } catch (IOException ex) {
+                ex.printStackTrace();
+            }
+        }
+        
         public Message receiveMessage() {
             Message m = null;
             try {
                 m = (Message)in.readObject();
-            } catch (IOException ex) {
-                ex.printStackTrace();
-            } catch (ClassNotFoundException ex) {
-                ex.printStackTrace();
+            } catch (IOException | ClassNotFoundException ex) {
+                if(isRunning) {
+                    ex.printStackTrace();
+                    SchiffServer.this.disconnect();
+                    exit(true);
+                }
+                isRunning = false;
             }
             return m;
         }
@@ -158,7 +191,12 @@ public class SchiffServer extends Thread {
                 out.writeObject(m);
                 out.flush();
             } catch (IOException ex) {
-                ex.printStackTrace();
+                if(isRunning) {
+                    ex.printStackTrace();
+                    SchiffServer.this.disconnect();
+                    exit(true);
+                }
+                isRunning = false;
             }
         }
         

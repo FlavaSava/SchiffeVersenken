@@ -90,14 +90,13 @@ public abstract class Schiff {
     
     @Override
     public String toString() {
-        String res = "{[";
+        String res = "{";
         for(Point p : coords) {
             if(p != null) {
-                res += p.x+","+p.y;
+                res += (char)(p.y+65)+""+(p.x+1)+", ";
             } else {
-                res += "n/A";
+                res += "n/A, ";
             }
-            res += "] [";
         }
         return res.substring(0, res.length()-2) + "}";
     }

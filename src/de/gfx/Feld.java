@@ -109,7 +109,45 @@ public class Feld extends JPanel implements MouseMotionListener {
                         //Rotes X im Kästchen zeichnen
                         g.drawLine(xOff + (xOff * x) + xOff/4, yOff + (yOff * y) + yOff/4, (int)(xOff + (xOff * x) + xOff * 0.75), (int)(yOff + (yOff * y) + yOff * 0.75));
                         g.drawLine((int)(xOff + (xOff * x) + xOff * 0.75), yOff + (yOff * y) + yOff/4, xOff + (xOff * x) + xOff/4, (int)(yOff + (yOff * y) + yOff * 0.75));
-                        g.drawLine(xOff + (xOff * x), yOff + (yOff * y) + yOff/2, xOff + (xOff * x) + xOff, yOff + (yOff * y) + yOff/2);
+                        
+                        if(getSchiffByCoords(new Point(x, y)).getType() == Schiff.TYPE_LEFT_RIGHT) {
+                            //Waagerechter Strich
+                                g.drawLine(xOff + (xOff * x), yOff + (yOff * y) + yOff/2, xOff + (xOff * x) + xOff, yOff + (yOff * y) + yOff/2);
+                        } else {
+                            //Senkrechter Strich
+                                g.drawLine(xOff + (xOff * x) + xOff/2, yOff + (yOff * y), xOff + (xOff * x) + xOff/2, yOff + (yOff * y) + yOff);
+                        }
+                        
+//                        if(x == 0) {
+//                            if(feld[y][x+1] == Feld.ID_HIT_DONE) {
+//                                
+//                            }
+//                        } else if(x == feld[y].length) {
+//                            if(feld[y][x-1] == Feld.ID_HIT_DONE) {
+//                                //Waagerechter Strich
+//                                g.drawLine(xOff + (xOff * x), yOff + (yOff * y) + yOff/2, xOff + (xOff * x) + xOff, yOff + (yOff * y) + yOff/2);
+//                            }
+//                        } else {
+//                            if(feld[y][x+1] == Feld.ID_HIT_DONE || feld[y][x-1] == Feld.ID_HIT_DONE) {
+//                                //Waagerechter Strich
+//                                g.drawLine(xOff + (xOff * x), yOff + (yOff * y) + yOff/2, xOff + (xOff * x) + xOff, yOff + (yOff * y) + yOff/2);
+//                            }
+//                        }
+//                        if(y == 0) {
+//                            if(feld[y+1][x] == Feld.ID_HIT_DONE) {
+//                                
+//                            }
+//                        } else if(y == feld.length) {
+//                            if(feld[y-1][x] == Feld.ID_HIT_DONE) {
+//                                //Senkrechter Strich
+//                                g.drawLine(xOff + (xOff * x) + xOff/2, yOff + (yOff * y), xOff + (xOff * x) + xOff/2, yOff + (yOff * y) + yOff);
+//                            }
+//                        } else {
+//                            if(feld[y+1][x] == Feld.ID_HIT_DONE || feld[y-1][x] == Feld.ID_HIT_DONE) {
+//                                //Senkrechter Strich
+//                                g.drawLine(xOff + (xOff * x) + xOff/2, yOff + (yOff * y), xOff + (xOff * x) + xOff/2, yOff + (yOff * y) + yOff);
+//                            }
+//                        }
                         break;
                     }
                 }
@@ -239,11 +277,15 @@ public class Feld extends JPanel implements MouseMotionListener {
         return null;
     }
     
+    public boolean allSchiffDestroyed() {
+        return schiffe.stream().noneMatch((f) -> (!f.isDestroyed()));
+    }
+    
     public final void stopRefresh() {
         refresh = false;
     }
     
-    public void addSchiff(Schiff f) {
+    public void addSchiff(Schiff f, boolean toField) {
         if(!f.isVerified()) {
             throw new IllegalStateException("Schiff ist nicht validiert! "+f);
         }
@@ -252,9 +294,11 @@ public class Feld extends JPanel implements MouseMotionListener {
                 throw new IllegalArgumentException("Schiff scheidet sich mit einm anderen! "+f);
             }
         }
-        for(Point p : f.getCoords()) {
-            schiffpunkte.add(p);
-            feld[p.y][p.x] = ID_SHIP;
+        if(toField) {
+            for(Point p : f.getCoords()) {
+                schiffpunkte.add(p);
+                feld[p.y][p.x] = ID_SHIP;
+            }
         }
         schiffe.add(f);
     }
